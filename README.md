@@ -61,4 +61,8 @@ python eval_after_pgd.py
 
 # Part 3:
 pending ...
+
 # Data-Center-Processing---PGD-attack-on-CircuitNet
+Dataset now is based on the https://github.com/circuitnet/CircuitNet. CircuitNet is an open-source dataset dedicated to machine learning (ML) applications in electronic design automation (EDA). It has collected more than 20K samples from versatile runs of commercial design tools based on open-source designs with various features for multiple ML for EDA applications. 
+
+About setup you can follow the instruction in the CircuitNet github.
