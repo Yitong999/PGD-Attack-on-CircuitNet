@@ -129,8 +129,8 @@ if __name__ == "__main__":
     y_true_4 = []
 
     
-    model_1 = torch.load('models/model_CNN.pth')
-    model_2 = torch.load('models/model_MLP.pth')
+    model_2 = torch.load('models/model_CNN_20.pth')
+    model_1 = torch.load('models/model_MLP_50.pth')
     model_3 = torch.load('models/model_MLP.pth')
     model_4 = torch.load('models/model_CNN.pth')
 
