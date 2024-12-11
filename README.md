@@ -5,13 +5,14 @@ This repo contains the implementation of adversarial attacks (FGSM and PGD) on m
 ## Part 1:
 
 **A pytorch implementation of "[Towards Deep Learning Models Resistant to Adversarial Attacks](https://arxiv.org/abs/1706.06083)"**
+
 **Inspired by "[CircuitNet: An Open-Source Dataset for Machine Learning Applications in Electronic Design Automation (EDA)](https://github.com/circuitnet/CircuitNet.git)"**
 
 ## How to access
-This code is a pytorch implementation of **PGD attack**   
-In this code, I used above methods to fool [Inception v3](https://arxiv.org/abs/1512.00567).   
-'[Giant Panda](http://www.image-net.org/)' used for an example.   
-You can add other pictures with a folder with the label name in the 'data/imagenet'.    
+The artifact is available on [GitHub](https://github.com/Yitong999/PGD-Attack-on-CircuitNet). Users can clone the repository using: 
+
+	git clone https://github.com/Yitong999/PGD-Attack-on-CircuitNet
+	cd PGD-Attack-on-CircuitNet
 
 ## Requirements
 * python==3.6   
