@@ -15,22 +15,36 @@ The artifact is available on [GitHub](https://github.com/Yitong999/PGD-Attack-on
 	cd PGD-Attack-on-CircuitNet
 
 ## Hardware dependencies
-* python==3.8+   
-* numpy==1.14.2   
-* pytorch==1.0.1
 * NVIDIA GPU with 12GB+ VRAM (tested on NVIDIA A100)
 * 32GB+ RAM
 * 100GB+ free disk space 
 
-## Important results not in the code
-- Capacity(size of network) plays an important role in adversarial training. (p.9-10)
-	- For only natural examples training, it increases the robustness against one-step perturbations.
-	- For PGD adversarial training, small capacity networks fails.
-	- As capacity increases, the model can fit the adversairal examples increasingly well.
-	- More capacity and strong adversaries decrease transferability. (Section B)
-- FGSM adversaries don't increase robustness for large epsilon(=8). (p.9-10)
-	- The network overfit to FGSM adversarial examples.
-- Adversarial training with PGD shows good enough defense results.(p.12-13)
+## Software dependencies
+* python==3.8+   
+* numpy==1.14.2   
+* pytorch==1.11
+
+## Prerequisites
+Dependencies can be installed using pip:
+
+	pip install -r requirements.txt
+
+PyTorch is not included in requirement.txt, and you could install it following the instruction on PyTorch homepage [https://pytorch.org/](https://pytorch.org/).
+
+DGL is also not included in requirement.txt, and it is required for net delay prediction only. You could install it following the instruction on DGL homepage [https://www.dgl.ai/pages/start.html](https://www.dgl.ai/pages/start.html).
+
+Our experiments run on Python 3.9 and PyTorch 1.11. Other versions should work but are not tested.
+
+## Data sets
+Please follow the instructions on the [download page](https://circuitnet.github.io/intro/download.html) to set up the CircuitNet dataset for a specific task(Congestion/DRC/IR Drop).
+
+Dataset download links:
+
+[Baidu Netdisk.](https://pan.baidu.com/share/init?surl=udXVZnfjqniH9paKfyc2eQ&pwd=ijdh)
+
+[Google Drive](https://drive.google.com/drive/folders/10PD4zNa9fiVeBDQ0-drBwZ3TDEjQ3gmf)
+
+
 
 ## Notice
 - This Repository won't be updated.
