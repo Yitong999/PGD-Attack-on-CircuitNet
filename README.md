@@ -44,7 +44,12 @@ Dataset download links:
 
 [Google Drive](https://drive.google.com/drive/folders/10PD4zNa9fiVeBDQ0-drBwZ3TDEjQ3gmf)
 
+## Models
+Implementation includes three neural architectures:
 
+* CNN (baseline)
+* UNet
+* Transformer
 
 ## Notice
 - This Repository won't be updated.
