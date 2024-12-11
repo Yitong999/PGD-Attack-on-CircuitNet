@@ -60,7 +60,20 @@ Implementation includes three neural architectures:
 # Part 2:
 ## Experiment workflow
 ### Example Usage:
-Change the configuration in utils/config.py to fit your file path and adjust the hyper-parameter before starting.
+Change the configuration in [utils/config.py](https://github.com/Yitong999/PGD-Attack-on-CircuitNet/blob/0c175552d2125bf3b33f93989d0d3c01e33e6d95/routability_ir_drop_prediction/utils/configs.py) to fit your file path and adjust the hyper-parameter before starting.
 
+Test
+
+Congestion 
+
+	python test.py --task congestion_gpdl --pretrained PRETRAINED_WEIGHTS_PATH
+
+DRC
+
+	python test.py --task drc_routenet --pretrained PRETRAINED_WEIGHTS_PATH --save_path work_dir/drc_routenet/ --plot_roc 
+
+IR Drop
+
+	python test.py --task irdrop_mavi --pretrained PRETRAINED_WEIGHTS_PATH --save_path work_dir/irdrop_mavi/ --plot_roc
 
 ### Train models:
