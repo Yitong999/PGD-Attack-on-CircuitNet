@@ -76,4 +76,24 @@ IR Drop
 
 	python test.py --task irdrop_mavi --pretrained PRETRAINED_WEIGHTS_PATH --save_path work_dir/irdrop_mavi/ --plot_roc
 
+Train
+
+Congestion
+
+	python train.py --task congestion_gpdl --save_path work_dir/congestion_gpdl/
+
+DRC
+
+	python train.py --task drc_routenet --save_path work_dir/drc_routenet/
+
+IR Drop
+
+	python train.py --task irdrop_mavi --save_path work_dir/irdrop_mavi/
+
+Attack
+
+Congestion(Change attack algorithm in code)
+
+	python PGD_attack.py --task congestion_gpdl --save_path SAVE_PATH --pretrained PRETRAINED_WEIGHTS_PATH
+
 ### Train models:
