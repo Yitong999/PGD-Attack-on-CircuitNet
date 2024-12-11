@@ -1,14 +1,13 @@
-# PGD-pytorch
-This repo is consisted with three parts, one is the original version of PGD attack, and another one is advanced version of PGD attack which only affect one model, and the last part is how PGD attack works on CircuitNet Generative Models. 
-
-In the current stage, we have finished the implementation of PGD attack on Vanilla CNN models, and my modified the Vanilla PGD attack to adapt the model difference, in which affect one model while doesn't impact the other model. Later on, we will deploy the PGD attack on CircuitNet Generative Models. 
+# CircuitNet Under Attack: A Systematic Study of Adversarial Vulnerabilities in EDA Machine Learning Models
+This repo contains the implementation of adversarial attacks (FGSM and PGD) on machine learning models trained on the CircuitNet dataset for EDA tasks. It includes code for training and evaluating three neural architectures (CNN, UNet, and Transformer) for congestion prediction, along with scripts for generating and analyzing adversarial examples.
 
 
 ## Part 1:
 
 **A pytorch implementation of "[Towards Deep Learning Models Resistant to Adversarial Attacks](https://arxiv.org/abs/1706.06083)"**
+**Inspired by "[CircuitNet: An Open-Source Dataset for Machine Learning Applications in Electronic Design Automation (EDA)](https://github.com/circuitnet/CircuitNet.git)"**
 
-## Summary
+## How to access
 This code is a pytorch implementation of **PGD attack**   
 In this code, I used above methods to fool [Inception v3](https://arxiv.org/abs/1512.00567).   
 '[Giant Panda](http://www.image-net.org/)' used for an example.   
