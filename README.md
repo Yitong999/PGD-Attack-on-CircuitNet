@@ -108,3 +108,10 @@ Visual outputs include:
 * Training convergence plots
 * Adversarial perturbation visualizations
 * Congestion prediction comparisons
+
+### Experiment customization:
+Main code in routability_ir_drop_prediction, Users can modify:
+
+* Attack parameters (epsilon, iterations) in [config](https://github.com/Yitong999/PGD-Attack-on-CircuitNet/blob/d018578088b0094fa87415afcf33aa367f48f68b/routability_ir_drop_prediction/utils/configs.py)
+* Model architectures in [models/](https://github.com/Yitong999/PGD-Attack-on-CircuitNet/tree/d018578088b0094fa87415afcf33aa367f48f68b/routability_ir_drop_prediction/models)
+
