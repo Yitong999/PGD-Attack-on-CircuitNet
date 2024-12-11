@@ -96,4 +96,15 @@ Congestion(Change attack algorithm in code)
 
 	python PGD_attack.py --task congestion_gpdl --save_path SAVE_PATH --pretrained PRETRAINED_WEIGHTS_PATH
 
-### Train models:
+### Evaluation and expected results:
+The experiments should reproduce the following key results:
+
+*Transformer models show highest vulnerability (163.2% loss increase under PGD)
+*CNN models show lowest vulnerability (51.2% loss increase under PGD)
+*UNet models show intermediate vulnerability (80.3% loss increase under PGD)
+
+Visual outputs include:
+
+*Training convergence plots
+*Adversarial perturbation visualizations
+*Congestion prediction comparisons
