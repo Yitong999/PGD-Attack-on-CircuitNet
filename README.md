@@ -51,9 +51,7 @@ Implementation includes three neural architectures:
 * UNet
 * Transformer
 
-## Notice
-- This Repository won't be updated.
-- Please check [the package of adversarial attacks in pytorch](https://github.com/Harry24k/adversairal-attacks-pytorch)
+
 
 
 
@@ -115,3 +113,8 @@ Main code in routability_ir_drop_prediction, Users can modify:
 * Attack parameters (epsilon, iterations) in [config](https://github.com/Yitong999/PGD-Attack-on-CircuitNet/blob/d018578088b0094fa87415afcf33aa367f48f68b/routability_ir_drop_prediction/utils/configs.py)
 * Model architectures in [models/](https://github.com/Yitong999/PGD-Attack-on-CircuitNet/tree/d018578088b0094fa87415afcf33aa367f48f68b/routability_ir_drop_prediction/models)
 
+# Notice
+- All experiments were conducted using single GPU training
+- Results may vary slightly based on hardware configurations
+- Large dataset size requires significant storage space, over 100G
+- Please check [the package of adversarial attacks in pytorch](https://github.com/Harry24k/adversairal-attacks-pytorch)
