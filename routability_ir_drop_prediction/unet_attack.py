@@ -92,6 +92,38 @@ class CosineRestartLr(object):
             self.base_lr = [group['initial_lr'] for group in optimizer.param_groups  # type: ignore
         ]
 
+def fgsm_attack(image, epsilon, data_grad):
+    sign_data_grad = data_grad.sign()
+    perturbed_image = image + epsilon * sign_data_grad
+    perturbed_image = torch.clamp(perturbed_image, 0, 1)
+    return perturbed_image
+
+def pgd_attack(image, epsilon, model, target, loss_fn, alpha=0.01, num_steps=10):
+    perturbed_image = image.clone().detach()
+    
+    for i in range(num_steps):
+        perturbed_image.requires_grad = True
+        prediction = model(perturbed_image)
+        
+        # Handle multiple losses
+        if isinstance(loss_fn(prediction, target), tuple):
+            pixel_loss, _ = loss_fn(prediction, target)
+        else:
+            pixel_loss = loss_fn(prediction, target)
+        
+        pixel_loss.backward()
+        
+        with torch.no_grad():
+            grad_sign = perturbed_image.grad.sign()
+            perturbed_image = perturbed_image + alpha * grad_sign
+
+            delta = torch.clamp(perturbed_image - image, -epsilon, epsilon)
+            perturbed_image = torch.clamp(image + delta, 0, 1)
+        
+        perturbed_image = perturbed_image.detach()
+        
+    return perturbed_image
+
 
 def train():
     wandb.init(project='circuitnet', mode='offline')
@@ -103,43 +135,46 @@ def train():
         with open(arg.arg_file, 'rt') as f:
             arg_dict.update(json.load(f))
 
+    # Setup save path
     arg_dict['save_path'] = os.path.abspath(arg_dict['save_path'])
     if not os.path.exists(arg_dict['save_path']):
         os.makedirs(arg_dict['save_path'])
-    with open(os.path.join(arg_dict['save_path'],  'arg.json'), 'wt') as f:
-      json.dump(arg_dict, f, indent=4)
+    with open(os.path.join(arg_dict['save_path'], 'arg.json'), 'wt') as f:
+        json.dump(arg_dict, f, indent=4)
 
     print('save_path:', arg_dict['save_path'])
     
-    
+    # Setup dataset
     arg_dict['ann_file'] = arg_dict['ann_file_train']
     arg_dict['test_mode'] = False 
-
     print('===> Loading datasets')
-    # Initialize dataset
+    arg_dict['num_workers'] = min(8, arg_dict.get('num_workers', 8))
     dataset = build_dataset(arg_dict)
 
+    # Build model
     print('===> Building model')
-    # Initialize model parameters
     model = build_model(arg_dict)
     if not arg_dict['cpu']:
         print('Using GPU')
         model = model.cuda()
     
-    # Build loss
+    # Setup loss, optimizer and scheduler
     loss = build_loss(arg_dict)
-
-    # Build Optimzer
-    optimizer = optim.AdamW(model.parameters(), lr=arg_dict['lr'],  betas=(0.9, 0.999), weight_decay=arg_dict['weight_decay'])
-
-    # Build lr scheduler
+    optimizer = optim.AdamW(model.parameters(), lr=arg_dict['lr'], betas=(0.9, 0.999), weight_decay=arg_dict['weight_decay'])
     cosine_lr = CosineRestartLr(arg_dict['lr'], [arg_dict['max_iters']], [1], 1e-7)
     cosine_lr.set_init_lr(optimizer)
 
-    epoch_loss = 0
+    # Training parameters
     iter_num = 0
+    epoch_loss = 0
     print_freq = 100
     save_freq = 10000
+    
+    # Adversarial attack parameters
+    epsilon = 0.01  # FGSM/PGD perturbation size
+    alpha = 0.01    # PGD step size
+    num_steps = 10  # PGD number of steps
+    attack_type = "fgsm"  #  pgd or "fgsm"
 
     while iter_num < arg_dict['max_iters']:
         with tqdm(total=print_freq) as bar:
@@ -149,52 +184,79 @@ def train():
                 else:
                     input, target = feature.cuda(), label.cuda()
                 
-                # import ipdb; ipdb.set_trace()
-                # input_img = input[0]  # shape: [3, 256, 256]
-                # input_img = input_img.cpu().numpy()
-                # input_img = np.transpose(input_img, (1,2,0))
-                # input_img = (input_img - input_img.min()) / (input_img.max() - input_img.min())
-
-                # plt.imsave('/scratch/yc7900/eg/code/circuit_learning/CircuitNet/routability_ir_drop_prediction/imgs/input_image.png', input_img)
-
-                # target_img = target[0,0].cpu().numpy()  # shape: [256, 256]
-                # target_img = (target_img - target_img.min()) / (target_img.max() - target_img.min())
-
-                # plt.imsave('/scratch/yc7900/eg/code/circuit_learning/CircuitNet/routability_ir_drop_prediction/imgs/target_image.png', target_img, cmap='gray')
-                
+                # Update learning rate
                 regular_lr = cosine_lr.get_regular_lr(iter_num)
                 cosine_lr._set_lr(optimizer, regular_lr)
 
+                # Clean prediction and loss
                 prediction = model(input)
                 
-                # pred_img = prediction[0,0].detach().cpu().numpy()  # shape: [256, 256]
-                # pred_img = (pred_img - pred_img.min()) / (pred_img.max() - pred_img.min())
-                # plt.imsave('/scratch/yc7900/eg/code/circuit_learning/CircuitNet/routability_ir_drop_prediction/imgs/prediction_image.png', pred_img, cmap='gray')
+                if isinstance(arg_dict['loss_type'], list):
+                    clean_pixel_loss, clean_separate_losses = loss(prediction, target)
+                    clean_mse_loss = clean_separate_losses[0]
+                    clean_ssim_loss = clean_separate_losses[1]
+                else:
+                    clean_pixel_loss = loss(prediction, target)
+                    clean_mse_loss = clean_pixel_loss
 
+                # Generate adversarial examples using PGD
+                perturbed_input = pgd_attack(
+                    input, 
+                    epsilon, 
+                    model, 
+                    target, 
+                    loss,
+                    alpha=alpha,
+                    num_steps=num_steps
+                )
+
+                # Adversarial prediction and loss
+                adv_prediction = model(perturbed_input)
+                
+                if isinstance(arg_dict['loss_type'], list):
+                    adv_pixel_loss, adv_separate_losses = loss(adv_prediction, target)
+                    adv_mse_loss = adv_separate_losses[0]
+                    adv_ssim_loss = adv_separate_losses[1]
+                else:
+                    adv_pixel_loss = loss(adv_prediction, target)
+                    adv_mse_loss = adv_pixel_loss
+
+                # Log losses
+                wandb.log({
+                    "clean_mse_loss": clean_mse_loss.item(),
+                    "clean_ssim_loss": clean_ssim_loss.item() if isinstance(arg_dict['loss_type'], list) else 0,
+                    "clean_total_loss": clean_pixel_loss.item(),
+                    "adv_mse_loss": adv_mse_loss.item(),
+                    "adv_ssim_loss": adv_ssim_loss.item() if isinstance(arg_dict['loss_type'], list) else 0,
+                    "adv_total_loss": adv_pixel_loss.item(),
+                    "lr": regular_lr,
+                    "timestep": iter_num
+                })
+                
+                epoch_loss += clean_mse_loss.item()
+
+                # Optimization step
                 optimizer.zero_grad()
-                pixel_loss = loss(prediction, target)
-
-                epoch_loss += pixel_loss.item()
-                pixel_loss.backward()
+                total_loss = clean_pixel_loss + 0.5 * adv_pixel_loss
+                total_loss.backward()
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
                 optimizer.step()
 
-                wandb.log({"loss": pixel_loss.item(), "timestep": iter_num})
                 iter_num += 1
-                
                 bar.update(1)
 
                 if iter_num % print_freq == 0:
                     break
 
-        print("===> Iters[{}]({}/{}): Loss: {:.4f}".format(iter_num, iter_num, arg_dict['max_iters'], epoch_loss / print_freq))
+        print("===> Iters[{}]({}/{}): Loss: {:.4f}".format(
+            iter_num, iter_num, arg_dict['max_iters'], epoch_loss / print_freq))
+        
         if iter_num % save_freq == 0:
             checkpoint(model, iter_num, arg_dict['save_path'])
             
         epoch_loss = 0
     
     wandb.finish()
-
-
 
 if __name__ == "__main__":
     train()

@@ -117,6 +117,7 @@ def train():
 
     print('===> Loading datasets')
     # Initialize dataset
+    arg_dict['num_workers'] = min(8, arg_dict.get('num_workers', 8))
     dataset = build_dataset(arg_dict)
 
     print('===> Building model')
@@ -171,14 +172,38 @@ def train():
                 # pred_img = (pred_img - pred_img.min()) / (pred_img.max() - pred_img.min())
                 # plt.imsave('/scratch/yc7900/eg/code/circuit_learning/CircuitNet/routability_ir_drop_prediction/imgs/prediction_image.png', pred_img, cmap='gray')
 
-                optimizer.zero_grad()
-                pixel_loss = loss(prediction, target)
+                if isinstance(arg_dict['loss_type'], list):
+                    pixel_loss, separate_losses = loss(prediction, target)
+                    epoch_loss += pixel_loss.item()
+                else:
+                    pixel_loss = loss(prediction, target)
+                    if isinstance(pixel_loss, tuple):
+                        pixel_loss = pixel_loss[0]
+                    epoch_loss += pixel_loss.item()
+                # pixel_loss = loss(prediction, target)
 
-                epoch_loss += pixel_loss.item()
+                # epoch_loss += pixel_loss.item()
+                optimizer.zero_grad()
                 pixel_loss.backward()
+
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
                 optimizer.step()
 
-                wandb.log({"loss": pixel_loss.item(), "timestep": iter_num})
+                if isinstance(arg_dict['loss_type'], list):
+                    wandb.log({
+                        "loss": separate_losses[0].item(),
+                        "mse_loss": separate_losses[0].item(),
+                        "ssim_loss": separate_losses[1].item(),
+                        "total_loss": pixel_loss.item(),
+                        "lr": regular_lr,
+                        "timestep": iter_num
+                    })
+                else:
+                    wandb.log({
+                        "loss": pixel_loss.item(),
+                        "lr": regular_lr,
+                        "timestep": iter_num
+                    })
                 iter_num += 1
                 
                 bar.update(1)
