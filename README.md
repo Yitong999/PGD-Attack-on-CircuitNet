@@ -58,29 +58,9 @@ Implementation includes three neural architectures:
 
 
 # Part 2:
-### Download traffic sign GERMAN from https://www.kaggle.com/datasets/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign/data, rename it as German
+## Experiment workflow
+### Example Usage:
+Change the configuration in utils/config.py to fit your file path and adjust the hyper-parameter before starting.
 
-and run below script to keep only 10 classes for a easier training
-```
-python preprocess.py
-```
+
 ### Train models:
-train and save MLP model:
-```
-python train.py --epochs=50 --model=MLP --save_name=MLP_50
-```
-
-train and save CNN model:
-```
-python train.py --epochs=20 --model=CNN --save_name=MLP_20
-```
-
-### Advanced PGD attack:
-```
-python eval_after_pgd.py
-```
-
-
-# Part 3:
-pending ...
-# Data-Center-Processing---PGD-attack-on-CircuitNet
