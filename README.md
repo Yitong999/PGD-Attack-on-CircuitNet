@@ -14,10 +14,13 @@ The artifact is available on [GitHub](https://github.com/Yitong999/PGD-Attack-on
 	git clone https://github.com/Yitong999/PGD-Attack-on-CircuitNet
 	cd PGD-Attack-on-CircuitNet
 
-## Requirements
-* python==3.6   
+## Hardware dependencies
+* python==3.8+   
 * numpy==1.14.2   
-* pytorch==1.0.1   
+* pytorch==1.0.1
+* NVIDIA GPU with 12GB+ VRAM (tested on NVIDIA A100)
+* 32GB+ RAM
+* 100GB+ free disk space 
 
 ## Important results not in the code
 - Capacity(size of network) plays an important role in adversarial training. (p.9-10)
