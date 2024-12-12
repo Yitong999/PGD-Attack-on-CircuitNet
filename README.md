@@ -1,8 +1,38 @@
-# PGD-pytorch
-This repo is consisted with three parts, one is the original version of PGD attack, and another one is advanced version of PGD attack which only affect one model, and the last part is how PGD attack works on CircuitNet Generative Models. 
+# CircuitNet Under Attack: A Systematic Study of Adversarial Vulnerabilities in EDA Machine Learning Models
 
-In the current stage, we have finished the implementation of PGD attack on Vanilla CNN models, and my modified the Vanilla PGD attack to adapt the model difference, in which affect one model while doesn't impact the other model. Later on, we will deploy the PGD attack on CircuitNet Generative Models. 
+This repository contains the implementation of adversarial attacks (FGSM and PGD) on machine learning models trained on the CircuitNet dataset for EDA tasks. It includes code for training and evaluating three neural architectures (CNN, UNet, and Transformer) for congestion prediction, along with scripts for generating and analyzing adversarial examples.
 
+---
+
+## Artifact Checklist
+
+### Abstract
+This artifact provides a framework to evaluate the vulnerability of ML models in EDA tasks to adversarial attacks. It includes implementations of FGSM and PGD attacks and supports reproducibility of results reported in our paper, including accuracy drop measurements and visualizations. Minimal requirements include an NVIDIA GPU, Python 3.8+, and the CircuitNet dataset.
+
+### Checklist
+- **Algorithm**: Projected Gradient Descent (PGD), Fast Gradient Sign Method (FGSM).
+- **Program**: CircuitNet dataset benchmarks; download required.
+- **Compilation**: Python 3.8+ with PyTorch 1.11.
+- **Binary**: Not applicable; source code provided.
+- **Model**: CNN, UNet, and Transformer architectures are implemented.
+- **Dataset**: CircuitNet (20,000+ samples for EDA tasks), downloadable from Baidu Netdisk or Google Drive.
+- **Run-time environment**: Linux/MacOS with Python 3.8+ and PyTorch 1.11.
+- **Hardware**: NVIDIA GPU (12GB+ VRAM) and 32GB+ RAM.
+- **Metrics**: Accuracy loss, prediction deviation, adversarial perturbation impact.
+- **Output**: Numerical results, training convergence plots, adversarial perturbation visualizations.
+- **Publicly available**: Yes, under MIT license.
+- **Code license**: MIT license.
+
+---
+
+## How to Access
+
+The artifact is available on [GitHub](https://github.com/Yitong999/PGD-Attack-on-CircuitNet). Users can clone the repository using: 
+
+```bash
+git clone https://github.com/Yitong999/PGD-Attack-on-CircuitNet
+cd PGD-Attack-on-CircuitNet
+```
 
 ## Part 1:
 
